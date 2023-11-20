@@ -1,9 +1,15 @@
 import subprocess
 import re
 import time
+import os 
+import sys 
+
+if os.name != 'nt':
+    print("solo windows soportado")
+    sys.exit(-1)
+
 a = " SE NECESITA CORRER-EJECUTAR COMO ADMINISTRADOR mediante elpresente mensaje se le informa el siguiente script desactivara varios servicios de windows con tal de mejorar el rendimiento de su PC,entre los cuales va incluido en su totalidad la telemtria y servicios obsoletos para hoy dia, al escribir (SI) "
 def politicas_y_terminos(aceptacion):
-    b = aceptacion
     if (aceptacion == "SI" ):
        print("ha aceptado los terminos, el script se ejecutara enseguida")
        
