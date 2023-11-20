@@ -1,0 +1,2 @@
+finally it stop frezzing and it perfectly disables defender.
+now we just need to find a way to resolve the def servicios de telemtria
