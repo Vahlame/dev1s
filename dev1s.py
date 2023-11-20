@@ -1,8 +1,8 @@
 import subprocess
 import re
-import time
 import os 
 import sys 
+import winreg
 
 if os.name != 'nt':
     print("solo windows soportado")
@@ -18,12 +18,18 @@ def politicas_y_terminos(aceptacion):
 choice = input(a)
 politicas_y_terminos(choice)
 
-# Deshabilitar Microsoft Defender
-subprocess.run('powershell.exe Set-MpPreference -DisableRealtimeMonitoring $true', shell=True)
-# Esperar 10 minutos
-time.sleep(600)
-# Habilitar Microsoft Defender
-subprocess.run('powershell.exe Set-MpPreference -DisableRealtimeMonitoring $false', shell=True)
+def disable_windows_defender():
+    try:
+        registry_path = r"SOFTWARE\Policies\Microsoft\Windows Defender"
+        key_handle = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, registry_path, 0, winreg.KEY_SET_VALUE)
+        value_name = "DisableAntiSpyware"
+        value_data = 1
+        winreg.SetValueEx(key_handle, value_name, 0, winreg.REG_DWORD, value_data)
+        winreg.CloseKey(key_handle)
+        print("Windows Defender ha sido desactivado correctamente.")
+    except Exception as e:
+        print(f"Error al desactivar Windows Defender: {e}")
+disable_windows_defender()
 
 def Servicios_telemetria ():
       Commands = [
@@ -73,10 +79,9 @@ def Servicios_telemetria ():
             print (f"parte {str(co)} de 35")
         else:
             print("listo")
-
 Servicios_telemetria ()
-
 print("fase 1 lista")
+
 def eliminar_tareas_programadas():
       comando_eliminar_tareas = "schtasks /delete /tn * /f"
     
@@ -85,9 +90,7 @@ def eliminar_tareas_programadas():
         print("Todas las tareas programadas han sido eliminadas.")
       except subprocess.CalledProcessError as e:
         print(f"Error al eliminar las tareas programadas: {str(e)}")
-
 eliminar_tareas_programadas()
-
 print("fase 2 lista")
 
 def desactivar_cortana_noticias_anuncios():
@@ -102,9 +105,7 @@ def desactivar_cortana_noticias_anuncios():
             subprocess.run(['powershell',comando], shell=True, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error al ejecutar el comando '{comando}': {str(e)}")
-
 desactivar_cortana_noticias_anuncios()
-
 print("fase 3 lista")
 
 def establecer_memoria_paginacion():
@@ -122,12 +123,10 @@ def establecer_memoria_paginacion():
         print(f"El tamaño de la memoria de paginación se ha establecido a 1024-{1024*x}.")
        except subprocess.CalledProcessError as e:
         print(f"Error al ejecutar los comandos: {str(e)}")
-
 establecer_memoria_paginacion()
-
 print("fase 4 lista")
 
-def configurar_cpu():
+def configurar_cpu_antivirus():
       comandos = [
         "Get-MpPreference | Select ScanAvgCPULoadFactor",
         "Set-MpPreference -ScanAvgCPULoadFactor 10",
@@ -139,8 +138,7 @@ def configurar_cpu():
             subprocess.run(["powershell", "-Command", comando], shell=True, capture_output=True, text=True, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error al ejecutar el comando '{comando}': {str(e)}")
-configurar_cpu()
-
+configurar_cpu_antivirus()
 print("fase 5 lista")
 
 print("listo, se puede cerrar")
